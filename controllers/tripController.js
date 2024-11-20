@@ -4,28 +4,41 @@ const knex = initKnex(configuration);
 
 // POST api "/api/trips"
 export const addOne = async (req, res) => {
-    // let { user_id, trip_name, destination, start_date, end_date } = req.body;
+    // validate body contents
+    // ensure no empty inputs for trip name + destination
+    if (!req.body.trip_name || !req.body.destination) {
+        return res.status(400).json({
+            error: "Please provide the name and destination for the trip in the request body",
+        });
+    }
 
-    // // validate body contents
-    // // ensure no empty inputs for trip name + destination
-    // if (!trip_name || !destination) {
-    //     return res.status(400).json({
-    //         error: "Please provide the name and destination for the trip in the request body",
-    //     });
-    // }
+    // ensure no empty inputs for trip start + end date
+    if (!req.body.start_date || !req.body.end_date) {
+        return res.status(400).json({
+            error: "Please provide the start and end dates for the trip in the request body",
+        });
+    }
 
-    // // ensure no empty inputs for trip start + end date
-    // if (!start_date || !end_date) {
-    //     return res.status(400).json({
-    //         error: "Please provide the start and end dates for the trip in the request body",
-    //     });
-    // }
+    // ensure valid trip start + end date format
+    // ensure start date is the same or before the end date
+    function validateDate(date) {
+        const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
+        return datePattern.test(date);
+    }
 
-    // // ensure no spaces at the beginning of text inputs
-    // trip_name = trip_name.trim();
-    // destination = destination.trim();
+    if (
+        !validateDate(req.body.start_date) ||
+        !validateDate(req.body.end_date) ||
+        req.body.start_date > req.body.end_date
+    ) {
+        return res.status(400).json({
+            error: "Please provide valid start and end dates for the trip in the request body",
+        });
+    }
 
-    console.log(req.body);
+    // ensure no spaces at the beginning of text inputs
+    req.body.trip_name = req.body.trip_name.trim();
+    req.body.destination = req.body.destination.trim();
 
     try {
         // filter the "users" table to the first user/row with the "user_id" from the post request body
@@ -34,7 +47,7 @@ export const addOne = async (req, res) => {
         // ensure new trip's user exists in "users" table
         if (!checkUser) {
             return res.status(400).json({
-                error: `User id ${user_id} not found`,
+                error: `User id ${req.body.user_id} not found`,
             });
         }
 
@@ -45,12 +58,16 @@ export const addOne = async (req, res) => {
         const newTripId = data[0];
 
         // store entire new table row in a variable
-        const createdItem = await knex("trips").where({
+        // destructure object from array
+        const [createdTrip] = await knex("trips").where({
             id: newTripId,
         });
 
+        // create new object without timestamps (without modifying original object)
+        const { created_at, updated_at, ...filteredTrip } = createdTrip;
+
         // send response status and body
-        res.status(201).json(createdItem);
+        res.status(201).json(filteredTrip);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Unable to create trip" });

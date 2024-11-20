@@ -12,8 +12,8 @@ export async function seed(knex) {
             title: "Day Trip to Pillow World",
             description: "Exploring the comfy depths of the Multiverse",
             date: "2025-03-05",
-            startTime: "08:00:00",
-            endTime: "20:00:00",
+            start_time: "08:00:00",
+            end_time: "20:00:00",
         },
         {
             id: "2",
@@ -21,8 +21,8 @@ export async function seed(knex) {
             title: "Day Trip to Baby World",
             description: "",
             date: "2025-03-07",
-            startTime: "09:00:00",
-            endTime: "18:00:00",
+            start_time: "09:00:00",
+            end_time: "18:00:00",
         },
         {
             id: "3",
@@ -30,8 +30,8 @@ export async function seed(knex) {
             title: "Exploration of Rick's Garage",
             description: "A deep dive into interdimensional gadgets and experiments.",
             date: "2025-03-09",
-            startTime: "10:00:00",
-            endTime: "17:00:00",
+            start_time: "10:00:00",
+            end_time: "17:00:00",
         },
         {
             id: "4",
@@ -39,8 +39,8 @@ export async function seed(knex) {
             title: "Vacation on Planet Blobulus",
             description: "A relaxing getaway in a world of sentient jello creatures.",
             date: "2025-03-11",
-            startTime: "12:00:00",
-            endTime: "20:00:00",
+            start_time: "12:00:00",
+            end_time: "20:00:00",
         },
     ]);
 }

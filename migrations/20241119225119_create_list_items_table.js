@@ -13,9 +13,9 @@ export function up(knex) {
             .onDelete("CASCADE");
         table.string("item", 50).notNullable();
         table.string("description");
-        table.enu("status", ["Not Started", "In Progress", "Complete"]);
+        table.enu("status", ["Not Started", "In Progress", "Complete"]).notNullable();
+        table.string("category").notNullable();
         table.timestamp("created_at").defaultTo(knex.fn.now());
-        table.category("category").notNullable();
         table
             .timestamp("updated_at")
             .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));

@@ -6,8 +6,11 @@ const router = express.Router();
 // route "/api/trips/"
 router.route("/").post(tripController.addOne);
 
-// route "/api/trips/:userId"
-router.route("/:userId").get(tripController.getAll);
+// route "/api/trips/"
+router.route("/").get(tripController.getAll);
+
+// route "/api/trips/userId=:userId"
+router.route("/:tripId").get(tripController.getSingleTrip);
 
 // route "/api/trips/:tripId"
 router.route("/:tripId").patch(tripController.updateOne);

@@ -13,9 +13,9 @@ router.route("/").get(itineraryController.getAll);
 router.route("/:itineraryId").get(itineraryController.getSingle);
 
 // route "/api/itineraries/:itineraryId"
-// router.route("/:itineraryId").patch(itineraryController.updateOne);
+// router.route("/:itineraryId").patch(itineraryController.updateSingle);
 
 // route "/api/itineraries/:itineraryId"
-router.route("/:itineraryId").delete(itineraryController.deleteOne);
+router.route("/:itineraryId").delete(itineraryController.deleteSingle);
 
 export default router;

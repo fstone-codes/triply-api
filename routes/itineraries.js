@@ -6,10 +6,10 @@ const router = express.Router();
 // route "/api/itineraries/"
 router.route("/").post(itineraryController.addOne);
 
-// route "/api/itineraries/userId=123"
+// route "/api/itineraries/"
 router.route("/").get(itineraryController.getAll);
 
-// route "/api/itineraries"
+// route "/api/itineraries/:itineraryId"
 router.route("/:itineraryId").get(itineraryController.getSingle);
 
 // route "/api/itineraries/:itineraryId"

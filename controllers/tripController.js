@@ -30,8 +30,8 @@ export const addOne = async (req, res) => {
             });
         }
 
-        req.body.trip_name = req.body.trip_name.trim();
-        req.body.destination = req.body.destination.trim();
+        req.body.trip_name = trip_name.trim();
+        req.body.destination = destination.trim();
 
         const checkUser = await knex("users").where({ id: req.body.user_id }).first();
 
@@ -56,7 +56,7 @@ export const addOne = async (req, res) => {
     }
 };
 
-// GET api "/api/trips"
+// GET api "/api/trips?userId=123"
 export const getAll = async (req, res) => {
     try {
         const { userId } = req.query;
@@ -85,7 +85,7 @@ export const getAll = async (req, res) => {
 };
 
 // GET api "/api/trips/:tripId"
-export const getSingleTrip = async (req, res) => {
+export const getSingle = async (req, res) => {
     try {
         const { tripId } = req.params;
 
@@ -106,7 +106,7 @@ export const getSingleTrip = async (req, res) => {
 };
 
 // PATCH api "/api/trips/:tripId"
-export const updateOne = async (req, res) => {
+export const updateSingle = async (req, res) => {
     try {
         /*         const { trip_name, destination, start_date, end_date } = req.body;
 
@@ -158,7 +158,7 @@ export const updateOne = async (req, res) => {
 };
 
 // DELETE api "/api/trips/:tripId"
-export const deleteOne = async (req, res) => {
+export const deleteSingle = async (req, res) => {
     try {
         const { tripId } = req.params;
 

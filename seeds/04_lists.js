@@ -7,23 +7,23 @@ export async function seed(knex) {
     await knex("lists").del();
     await knex("lists").insert([
         {
-            id: "1",
-            trip_id: "1",
+            id: 1,
+            trip_id: 1,
             list_name: "Packing",
         },
         {
-            id: "2",
-            trip_id: "1",
+            id: 2,
+            trip_id: 1,
             list_name: "Trip Prep",
         },
         {
-            id: "3",
-            trip_id: "1",
+            id: 3,
+            trip_id: 1,
             list_name: "Gifts",
         },
         {
-            id: "4",
-            trip_id: "1",
+            id: 4,
+            trip_id: 1,
             list_name: "Groceries",
         },
     ]);

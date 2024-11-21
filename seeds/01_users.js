@@ -7,7 +7,7 @@ export async function seed(knex) {
     await knex("users").del();
     await knex("users").insert([
         {
-            id: "1",
+            id: 1,
             first_name: "Tiffany",
             last_name: "Oiler",
             username: "t_oiler",
@@ -15,7 +15,7 @@ export async function seed(knex) {
             password: "$2a$10$GLIBUYvIQX.N/nz.VpRMIeqzuJyfkTK78Vfv/3dlZaSzlo6YxD/uy",
         },
         {
-            id: "2",
+            id: 2,
             first_name: "Finn",
             last_name: "Mertens",
             username: "finn_the_human",
@@ -23,7 +23,7 @@ export async function seed(knex) {
             password: "$2a$10$XkOS/z4jYtPCH.oGtmVXue9ygYxMgwupZ6BJEJ5DsoAE/YdpjNqoK",
         },
         {
-            id: "3",
+            id: 3,
             first_name: "Marceline",
             last_name: "Abadeer",
             username: "marcy_vampqueen",

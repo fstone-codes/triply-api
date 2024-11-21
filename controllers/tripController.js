@@ -63,11 +63,6 @@ export const addSingle = async (req, res) => {
 };
 
 // GET api "/api/trips?userId=123"
-// OPTIONS:
-// GET api "/api/trips/:tripId/:userId" - just add dynamic userId to destructuring
-// GET api "/api/trips?tripId=123"
-// what route can I chain my controller function to if I need to make an edit?
-// for MVP of sprint-1, just choose one for now and refactor later as needed
 export const getAll = async (req, res) => {
     try {
         const { userId } = req.query;
@@ -100,14 +95,17 @@ export const getSingle = async (req, res) => {
     try {
         const { tripId } = req.params;
 
-        const tripFound = await knex("trips").where({ id: tripId });
+        const tripFound = await knex("trips").where({ id: tripId }).first();
 
         if (!tripFound) {
             return res.status(404).json({
                 error: `Trip id ${tripId} not found`,
             });
         }
-        const singleTrip = tripFound[0];
+
+        const trip = await knex("trips").where({ id: tripId });
+
+        const singleTrip = trip[0];
 
         res.status(200).json(singleTrip);
     } catch (error) {
@@ -119,10 +117,6 @@ export const getSingle = async (req, res) => {
 // PUT api "/api/trips/:tripId"
 export const updateSingle = async (req, res) => {
     try {
-        // dont need to validate on the backend, frontend is the first line of defense
-        // could check for unique names at the most for validation
-        // safer to do PUT
-
         if (!validatePostPut(req)) return;
 
         const { tripId } = req.params;

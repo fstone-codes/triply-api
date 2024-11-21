@@ -3,7 +3,7 @@ import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
 // POST api "/api/itineraries"
-export const addOne = async (req, res) => {
+export const addSingle = async (req, res) => {
     try {
         const { trip_id, title, description, date, start_time, end_time } = req.body;
 

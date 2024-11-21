@@ -4,7 +4,7 @@ import * as itineraryController from "../controllers/itineraryController.js";
 const router = express.Router();
 
 // route "/api/itineraries/"
-router.route("/").post(itineraryController.addOne);
+router.route("/").post(itineraryController.addSingle);
 
 // route "/api/itineraries/"
 router.route("/").get(itineraryController.getAll);

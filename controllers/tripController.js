@@ -2,36 +2,42 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
+function validatePostPut(req) {
+    const { trip_name, destination, start_date, end_date } = req.body;
+
+    if (!trip_name || !destination) {
+        return res.status(400).json({
+            error: "Please provide the name and destination for the trip in the request body",
+        });
+    }
+
+    if (!start_date || !end_date) {
+        return res.status(400).json({
+            error: "Please provide the start and end dates for the trip in the request body",
+        });
+    }
+
+    function dateFormat(date) {
+        const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
+        return datePattern.test(date);
+    }
+
+    if (!dateFormat(start_date) || !dateFormat(end_date) || start_date > end_date) {
+        return res.status(400).json({
+            error: "Please provide valid start and end dates for the trip in the request body",
+        });
+    }
+
+    req.body.trip_name = trip_name.trim();
+    req.body.destination = destination.trim();
+
+    return true;
+}
+
 // POST api "/api/trips"
-export const addOne = async (req, res) => {
+export const addSingle = async (req, res) => {
     try {
-        const { trip_name, destination, start_date, end_date } = req.body;
-
-        if (!trip_name || !destination) {
-            return res.status(400).json({
-                error: "Please provide the name and destination for the trip in the request body",
-            });
-        }
-
-        if (!start_date || !end_date) {
-            return res.status(400).json({
-                error: "Please provide the start and end dates for the trip in the request body",
-            });
-        }
-
-        function dateFormat(date) {
-            const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
-            return datePattern.test(date);
-        }
-
-        if (!dateFormat(start_date) || !dateFormat(end_date) || start_date > end_date) {
-            return res.status(400).json({
-                error: "Please provide valid start and end dates for the trip in the request body",
-            });
-        }
-
-        req.body.trip_name = trip_name.trim();
-        req.body.destination = destination.trim();
+        if (!validatePostPut(req)) return;
 
         const checkUser = await knex("users").where({ id: req.body.user_id }).first();
 
@@ -57,6 +63,11 @@ export const addOne = async (req, res) => {
 };
 
 // GET api "/api/trips?userId=123"
+// OPTIONS:
+// GET api "/api/trips/:tripId/:userId" - just add dynamic userId to destructuring
+// GET api "/api/trips?tripId=123"
+// what route can I chain my controller function to if I need to make an edit?
+// for MVP of sprint-1, just choose one for now and refactor later as needed
 export const getAll = async (req, res) => {
     try {
         const { userId } = req.query;
@@ -105,40 +116,14 @@ export const getSingle = async (req, res) => {
     }
 };
 
-// PATCH api "/api/trips/:tripId"
+// PUT api "/api/trips/:tripId"
 export const updateSingle = async (req, res) => {
     try {
-        /*         const { trip_name, destination, start_date, end_date } = req.body;
+        // dont need to validate on the backend, frontend is the first line of defense
+        // could check for unique names at the most for validation
+        // safer to do PUT
 
-        if (trip_name) req.body.trip_name = trip_name.trim();
-        if (destination) req.body.destination = destination.trim();
-
-        if ((trip_name && trip_name.trim() === "") || (destination && destination.trim() === "")) {
-            return res.status(400).json({
-                error: "Please provide the name and destination for the trip in the request body",
-            });
-        }
-
-        // if ((start_date && start_date === "") || (end_date && end_date === "")) {
-        //     return res.status(400).json({
-        //         error: "Please provide the start and end dates for the trip in the request body",
-        //     });
-        // }
-
-        function dateFormat(date) {
-            const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
-            return datePattern.test(date);
-        }
-
-        if (
-            (start_date && !dateFormat(start_date)) ||
-            (end_date && !dateFormat(end_date)) ||
-            (start_date && end_date && start_date > end_date)
-        ) {
-            return res.status(400).json({
-                error: "Please provide valid start and end dates for the trip in the request body",
-            });
-        } */
+        if (!validatePostPut(req)) return;
 
         const { tripId } = req.params;
 

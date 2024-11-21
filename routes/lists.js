@@ -22,18 +22,18 @@ router.route("/:listId").delete(listController.deleteSingleList);
 // ====================
 
 // route "/api/lists/:listId/items/"
-router.route("/:listId/items").post(listItemController.addOne);
+router.route("/:listId/items").post(listItemController.addSingleListItem);
 
 // route "/api/lists/:listId/items/"
-// router.route("/").get(listItemController.getAll);
+router.route("/:listId/items").get(listItemController.getAllListItems);
 
 // route "/api/lists/:listId/items/:itemId"
-// router.route("/:listId").get(listItemController.getSingle);
+router.route("/:listId/items/:itemId").get(listItemController.getSingleListItem);
 
 // route "/api/lists/:listId/items/:itemId"
-// router.route("/:listId").patch(listItemController.updateSingle);
+// router.route("/:listId/items/:itemId).patch(listItemController.updateSingleListItem);
 
 // route "/api/lists/:listId/items/:itemId"
-// router.route("/:listId").delete(listItemController.deleteSingle);
+// router.route("/:listId/items/:itemId").delete(listItemController.deleteSingleListItem);
 
 export default router;

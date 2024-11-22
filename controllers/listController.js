@@ -2,24 +2,32 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
+function validatePostPut(req, res) {
+    const { trip_id, list_name } = req.body;
+
+    if (!trip_id) {
+        return res.status(400).json({
+            error: "Please provide the trip id for the list in the request body",
+        });
+    }
+
+    if (!list_name) {
+        return res.status(400).json({
+            error: "Please provide the name for the list in the request body",
+        });
+    }
+
+    req.body.list_name = list_name.trim();
+
+    return true;
+}
+
 // POST api "/api/lists"
 export const addSingleList = async (req, res) => {
     try {
-        const { trip_id, list_name } = req.body;
+        if (!validatePostPut(req, res)) return;
 
-        if (!trip_id) {
-            return res.status(400).json({
-                error: "Please provide the trip id for the list in the request body",
-            });
-        }
-
-        if (!list_name) {
-            return res.status(400).json({
-                error: "Please provide the name for the list in the request body",
-            });
-        }
-
-        req.body.list_name = list_name.trim();
+        const { trip_id } = req.body;
 
         const checkTrip = await knex("trips").where({ id: trip_id }).first();
 
@@ -77,7 +85,27 @@ export const getSingleList = async (req, res) => {
     }
 };
 
-// PATCH api "/api/lists/:listId"
+// PUT api "/api/lists/:listId"
+export const updateSingleLink = async (req, res) => {
+    try {
+        if (!validatePostPut(req, res)) return;
+
+        const { listId } = req.params;
+
+        const rowsUpdated = await knex("lists").where({ id: listId }).update(req.body);
+
+        if (rowsUpdated === 0) {
+            return res.status(404).json({ error: `Trip id ${listId} not found` });
+        }
+
+        const updatedList = await knex("lists").where({ id: listId }).first();
+
+        res.status(200).json(updatedList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `Unable to modify list` });
+    }
+};
 
 // DELETE api "/api/lists/:listId"
 export const deleteSingleList = async (req, res) => {

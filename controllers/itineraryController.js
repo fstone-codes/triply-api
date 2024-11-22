@@ -2,53 +2,61 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
+function validatePostPut(req, res) {
+    const { trip_id, title, description, date, start_time, end_time } = req.body;
+
+    if (!trip_id) {
+        return res.status(400).json({
+            error: "Please provide the trip id for the itinerary item in the request body",
+        });
+    }
+
+    if (!title) {
+        return res.status(400).json({
+            error: "Please provide the title for the itinerary item in the request body",
+        });
+    }
+
+    if (!date || !start_time || !end_time) {
+        return res.status(400).json({
+            error: "Please provide the date, start and end times for the itinerary item in the request body",
+        });
+    }
+
+    function dateFormat(date) {
+        const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
+        return datePattern.test(date);
+    }
+
+    if (!dateFormat(date)) {
+        return res.status(400).json({
+            error: "Please provide a valid date for the itinerary item in the request body",
+        });
+    }
+
+    function timeFormat(time) {
+        const timePattern = /^(0\d|1\d|2[0-3]):?([0-5]\d):?([0-5]\d)$/;
+        return timePattern.test(time);
+    }
+
+    if (!timeFormat(start_time) || !timeFormat(end_time)) {
+        return res.status(400).json({
+            error: "Please provide a valid start and end time for the itinerary item in the request body",
+        });
+    }
+
+    req.body.title = title.trim();
+    if (description) req.body.description = description.trim();
+
+    return true;
+}
+
 // POST api "/api/itineraries"
 export const addSingle = async (req, res) => {
     try {
-        const { trip_id, title, description, date, start_time, end_time } = req.body;
+        if (!validatePostPut(req, res)) return;
 
-        if (!trip_id) {
-            return res.status(400).json({
-                error: "Please provide the trip id for the itinerary item in the request body",
-            });
-        }
-
-        if (!title) {
-            return res.status(400).json({
-                error: "Please provide the title for the itinerary item in the request body",
-            });
-        }
-
-        if (!date || !start_time || !end_time) {
-            return res.status(400).json({
-                error: "Please provide the date, start and end times for the itinerary item in the request body",
-            });
-        }
-
-        function dateFormat(date) {
-            const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
-            return datePattern.test(date);
-        }
-
-        if (!dateFormat(date)) {
-            return res.status(400).json({
-                error: "Please provide a valid date for the itinerary item in the request body",
-            });
-        }
-
-        function timeFormat(time) {
-            const timePattern = /^(0\d|1\d|2[0-3]):?([0-5]\d):?([0-5]\d)$/;
-            return timePattern.test(time);
-        }
-
-        if (!timeFormat(start_time) || !timeFormat(end_time)) {
-            return res.status(400).json({
-                error: "Please provide a valid start and end time for the itinerary item in the request body",
-            });
-        }
-
-        req.body.title = title.trim();
-        req.body.description = description.trim();
+        const { trip_id } = req.body;
 
         const checkTrip = await knex("trips").where({ id: trip_id }).first();
 
@@ -106,7 +114,27 @@ export const getSingle = async (req, res) => {
     }
 };
 
-// PATCH api "/api/itineraries/:itineraryId"
+// PUT api "/api/itineraries/:itineraryId"
+export const updateSingle = async (req, res) => {
+    try {
+        if (!validatePostPut(req, res)) return;
+
+        const { itineraryId } = req.params;
+
+        const rowsUpdated = await knex("itineraries").where({ id: itineraryId }).update(req.body);
+
+        if (rowsUpdated === 0) {
+            return res.status(404).json({ error: `Itinerary id ${itineraryId} not found` });
+        }
+
+        const updatedItinerary = await knex("itineraries").where({ id: itineraryId }).first();
+
+        res.status(200).json(updatedItinerary);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `Unable to modify itinerary` });
+    }
+};
 
 // DELETE api "/api/itineraries/:itineraryId"
 export const deleteSingle = async (req, res) => {

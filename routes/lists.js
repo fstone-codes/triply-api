@@ -14,7 +14,7 @@ router.route("/").get(listController.getAllLists);
 router.route("/:listId").get(listController.getSingleList);
 
 // route "/api/lists/:listId"
-// router.route("/:listId").patch(listController.updateSingle);
+router.route("/:listId").put(listController.updateSingleLink);
 
 // route "/api/lists/:listId"
 router.route("/:listId").delete(listController.deleteSingleList);

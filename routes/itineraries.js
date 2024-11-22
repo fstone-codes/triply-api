@@ -13,7 +13,7 @@ router.route("/").get(itineraryController.getAll);
 router.route("/:itineraryId").get(itineraryController.getSingle);
 
 // route "/api/itineraries/:itineraryId"
-// router.route("/:itineraryId").patch(itineraryController.updateSingle);
+router.route("/:itineraryId").put(itineraryController.updateSingle);
 
 // route "/api/itineraries/:itineraryId"
 router.route("/:itineraryId").delete(itineraryController.deleteSingle);

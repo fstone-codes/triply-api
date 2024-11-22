@@ -117,7 +117,7 @@ export const getSingle = async (req, res) => {
 // PUT api "/api/trips/:tripId"
 export const updateSingle = async (req, res) => {
     try {
-        if (!validatePostPut(req)) return;
+        if (!validatePostPut(req, res)) return;
 
         const { tripId } = req.params;
 

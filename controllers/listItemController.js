@@ -106,6 +106,7 @@ export const getSingleListItem = async (req, res) => {
             .select(
                 "list_items.id",
                 "list_items.list_id",
+                "list_items.item",
                 "list_items.description",
                 "list_items.status",
                 "list_items.category",
@@ -129,24 +130,34 @@ export const getSingleListItem = async (req, res) => {
 
 // PUT api "/api/lists/:listId/items/:itemId"
 export const updateSingleListItem = async (req, res) => {
-    //     try {
-    //         const { listId } = req.params;
-    //         const checkList = await knex("lists").where({ id: listId }).first();
-    //         if (!checkList) {
-    //             return res.status(404).json({
-    //                 error: `List id ${listId} not found`,
-    //             });
-    //         }
-    //         const listItemFound = await knex("list_items").insert(req.body);
-    //         const listItemData = listItemFound[0];
-    //         const [createdListItem] = await knex("list_items").where({
-    //             id: listItemData,
-    //         });
-    //         res.status(201).json(createdListItem);
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).json({ error: "Unable to create list item" });
-    //     }
+    try {
+        if (!validatePostPut(req, res)) return;
+
+        const { listId, itemId } = req.params;
+
+        const checkList = await knex("lists").where({ id: listId }).first();
+
+        if (!checkList) {
+            return res.status(404).json({
+                error: `List id ${listId} not found`,
+            });
+        }
+
+        const rowsUpdated = await knex("list_items")
+            .where({ id: itemId, list_id: listId })
+            .update(req.body);
+
+        if (rowsUpdated === 0) {
+            return res.status(404).json({ error: `List item id ${itemId} not found` });
+        }
+
+        const updatedListItem = await knex("list_items").where({ id: itemId }).first();
+
+        res.status(200).json(updatedListItem);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Unable to modify list item" });
+    }
 };
 
 // DELETE api "/api/lists/:listId/items/:itemId"

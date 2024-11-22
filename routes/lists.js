@@ -31,7 +31,7 @@ router.route("/:listId/items").get(listItemController.getAllListItems);
 router.route("/:listId/items/:itemId").get(listItemController.getSingleListItem);
 
 // route "/api/lists/:listId/items/:itemId"
-router.route("/:listId/items/:itemId").patch(listItemController.updateSingleListItem);
+router.route("/:listId/items/:itemId").put(listItemController.updateSingleListItem);
 
 // route "/api/lists/:listId/items/:itemId"
 router.route("/:listId/items/:itemId").delete(listItemController.deleteSingleListItem);

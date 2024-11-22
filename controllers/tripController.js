@@ -2,7 +2,7 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
-function validatePostPut(req) {
+function validatePostPut(req, res) {
     const { trip_name, destination, start_date, end_date } = req.body;
 
     if (!trip_name || !destination) {
@@ -37,7 +37,7 @@ function validatePostPut(req) {
 // POST api "/api/trips"
 export const addSingle = async (req, res) => {
     try {
-        if (!validatePostPut(req)) return;
+        if (!validatePostPut(req, res)) return;
 
         const checkUser = await knex("users").where({ id: req.body.user_id }).first();
 

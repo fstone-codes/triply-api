@@ -34,6 +34,6 @@ router.route("/:listId/items/:itemId").get(listItemController.getSingleListItem)
 // router.route("/:listId/items/:itemId).patch(listItemController.updateSingleListItem);
 
 // route "/api/lists/:listId/items/:itemId"
-// router.route("/:listId/items/:itemId").delete(listItemController.deleteSingleListItem);
+router.route("/:listId/items/:itemId").delete(listItemController.deleteSingleListItem);
 
 export default router;

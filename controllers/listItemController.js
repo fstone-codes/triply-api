@@ -93,13 +93,10 @@ export const getSingleListItem = async (req, res) => {
             });
         }
 
-        // const listItemFound = await knex("list_items").where({ list_id: listId });
-
-        // const singleListItem = listItemFound[0];
-
         const singleListItem = await knex("list_items")
             .join("lists", "list_items.list_id", "=", "lists.id")
-            .where({ id: itemId, list_id: listId })
+            .where({ "list_items.id": itemId })
+            .andWhere({ "list_items.list_id": listId })
             .select(
                 "list_items.id",
                 "list_items.list_id",
@@ -108,7 +105,8 @@ export const getSingleListItem = async (req, res) => {
                 "list_items.category",
                 "list_items.created_at",
                 "list_items.updated_at"
-            );
+            )
+            .first();
 
         if (!singleListItem) {
             return res.status(404).json({
@@ -126,3 +124,29 @@ export const getSingleListItem = async (req, res) => {
 // PATCH api "/api/lists/:listId/items/:itemId"
 
 // DELETE api "/api/lists/:listId/items/:itemId"
+export const deleteSingleListItem = async (req, res) => {
+    try {
+        const { listId, itemId } = req.params;
+
+        const listFound = await knex("lists").where({ id: listId }).first();
+
+        if (!listFound) {
+            return res.status(404).json({
+                error: `List id ${listId} not found`,
+            });
+        }
+
+        const rowsDeleted = await knex("list_items")
+            .where({ id: itemId, list_id: listId })
+            .delete();
+
+        if (rowsDeleted === 0) {
+            return res.status(404).json({ error: `List item id ${itemId} not found` });
+        }
+
+        res.sendStatus(204);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `Unable to delete list item` });
+    }
+};

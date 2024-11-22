@@ -84,7 +84,7 @@ export const deleteSingleList = async (req, res) => {
     try {
         const { listId } = req.params;
 
-        const rowsDeleted = await knex("itineraries").where({ id: listId }).delete();
+        const rowsDeleted = await knex("lists").where({ id: listId }).delete();
 
         if (rowsDeleted === 0) {
             return res.status(404).json({ error: `List id ${listId} not found` });

@@ -72,6 +72,7 @@ export const getAllListItems = async (req, res) => {
             .select(
                 "list_items.id",
                 "list_items.list_id",
+                "list_items.item",
                 "list_items.description",
                 "list_items.status",
                 "list_items.category",

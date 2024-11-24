@@ -13,9 +13,9 @@ export function up(knex) {
             .onDelete("CASCADE");
         table.string("title", 50).notNullable();
         table.text("description");
-        table.date("date").notNullable();
-        table.time("start_time").notNullable();
-        table.time("end_time").notNullable();
+        table.dateTime("start").notNullable();
+        table.dateTime("end").notNullable();
+        table.boolean("all_day").defaultTo(false);
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table
             .timestamp("updated_at")

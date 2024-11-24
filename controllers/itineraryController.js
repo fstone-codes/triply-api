@@ -2,8 +2,10 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
+import dayjs from "dayjs";
+
 function validatePostPut(req, res) {
-    const { trip_id, title, description, date, start_time, end_time } = req.body;
+    const { trip_id, title, description, all_day, start, end } = req.body;
 
     if (!trip_id) {
         return res.status(400).json({
@@ -17,32 +19,37 @@ function validatePostPut(req, res) {
         });
     }
 
-    if (!date || !start_time || !end_time) {
+    if (!start || !end) {
         return res.status(400).json({
-            error: "Please provide the date, start and end times for the itinerary item in the request body",
+            error: "Please provide the start and end times for the itinerary item in the request body",
         });
     }
 
-    function dateFormat(date) {
-        const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
-        return datePattern.test(date);
-    }
-
-    if (!dateFormat(date)) {
+    if (all_day !== undefined && typeof all_day !== "boolean") {
         return res.status(400).json({
-            error: "Please provide a valid date for the itinerary item in the request body",
+            error: "Please provide a valid all day boolean value for the itinerary item in the request body",
         });
     }
 
-    function timeFormat(time) {
-        const timePattern = /^(0\d|1\d|2[0-3]):?([0-5]\d):?([0-5]\d)$/;
-        return timePattern.test(time);
+    // Validate date-time format using Day.js
+    function dateTimeFormat(dateTime) {
+        return dayjs(dateTime).isValid();
     }
 
-    if (!timeFormat(start_time) || !timeFormat(end_time)) {
-        return res.status(400).json({
-            error: "Please provide a valid start and end time for the itinerary item in the request body",
-        });
+    if (all_day) {
+        // For all-day events, only validate the date format
+        if (!dateTimeFormat(start) || !dateTimeFormat(end)) {
+            return res.status(400).json({
+                error: "Please provide valid start and end dates for the itinerary item in the request body",
+            });
+        }
+    } else {
+        // Validate start and end if all_day is false
+        if (!dateTimeFormat(start) || !dateTimeFormat(end) || dayjs(end).isBefore(dayjs(start))) {
+            return res.status(400).json({
+                error: "Please provide a valid start and end date-time for the itinerary item in the request body",
+            });
+        }
     }
 
     req.body.title = title.trim();

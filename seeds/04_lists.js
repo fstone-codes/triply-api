@@ -26,5 +26,10 @@ export async function seed(knex) {
             trip_id: 1,
             list_name: "Groceries",
         },
+        {
+            id: 5,
+            trip_id: 2,
+            list_name: "Packing",
+        },
     ]);
 }

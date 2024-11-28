@@ -9,7 +9,7 @@ router.route("/").post(tripController.addSingle);
 // route "/api/trips?userId=123"
 router.route("/").get(tripController.getAll);
 
-// route "/api/trips"
+// route "/api/trips/:tripId"
 router.route("/:tripId").get(tripController.getSingle);
 
 // route "/api/trips/:tripId"

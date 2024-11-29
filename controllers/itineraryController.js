@@ -1,8 +1,7 @@
+import dayjs from "dayjs";
 import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
-
-import dayjs from "dayjs";
 
 function validatePostPut(req, res) {
     const { trip_id, title, description, all_day, start, end } = req.body;
@@ -31,20 +30,17 @@ function validatePostPut(req, res) {
         });
     }
 
-    // Validate date-time format using Day.js
     function dateTimeFormat(dateTime) {
         return dayjs(dateTime).isValid();
     }
 
     if (all_day) {
-        // For all-day events, only validate the date format
         if (!dateTimeFormat(start) || !dateTimeFormat(end)) {
             return res.status(400).json({
                 error: "Please provide valid start and end dates for the itinerary item in the request body",
             });
         }
     } else {
-        // Validate start and end if all_day is false
         if (!dateTimeFormat(start) || !dateTimeFormat(end) || dayjs(end).isBefore(dayjs(start))) {
             return res.status(400).json({
                 error: "Please provide a valid start and end date-time for the itinerary item in the request body",

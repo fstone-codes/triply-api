@@ -1,9 +1,8 @@
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
-
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
 
 dayjs.extend(customParseFormat);
 

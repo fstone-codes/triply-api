@@ -7,7 +7,7 @@ import tripsRoutes from "./routes/trips.js";
 import itinerariesRoutes from "./routes/itineraries.js";
 import listsRoutes from "./routes/lists.js";
 
-const { DB_PORT, CORS_ORIGIN } = process.env;
+const { PORT, CORS_ORIGIN } = process.env;
 
 app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
@@ -20,6 +20,6 @@ app.get("/", (req, res) => {
     res.send("👋 Hello from server");
 });
 
-app.listen(DB_PORT, () => {
-    console.log(`Running at http://localhost:${DB_PORT}`);
+app.listen(PORT, () => {
+    console.log(`Running at http://localhost:${PORT}`);
 });

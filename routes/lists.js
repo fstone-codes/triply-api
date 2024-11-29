@@ -10,7 +10,7 @@ router.route("/").post(listController.addSingleList);
 // route "/api/lists/"
 router.route("/").get(listController.getAllLists);
 
-// route "/api/lists"
+// route "/api/lists/:listId"
 router.route("/:listId").get(listController.getSingleList);
 
 // route "/api/lists/:listId"
@@ -19,12 +19,12 @@ router.route("/:listId").put(listController.updateSingleLink);
 // route "/api/lists/:listId"
 router.route("/:listId").delete(listController.deleteSingleList);
 
-// ====================
+// ====================================
 
-// route "/api/lists/:listId/items/"
+// route "/api/lists/:listId/items"
 router.route("/:listId/items").post(listItemController.addSingleListItem);
 
-// route "/api/lists/:listId/items/"
+// route "/api/lists/:listId/items"
 router.route("/:listId/items").get(listItemController.getAllListItems);
 
 // route "/api/lists/:listId/items/:itemId"

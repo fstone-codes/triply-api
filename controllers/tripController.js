@@ -2,6 +2,11 @@ import initKnex from "knex";
 import configuration from "../knexfile.js";
 const knex = initKnex(configuration);
 
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+
+dayjs.extend(customParseFormat);
+
 function validatePostPut(req, res) {
     const { trip_name, destination, start_date, end_date } = req.body;
 
@@ -18,8 +23,7 @@ function validatePostPut(req, res) {
     }
 
     function dateFormat(date) {
-        const datePattern = /^\d{4}-?(0[1-9]|1[0-2])-?(0[1-9]|[12]\d|3[01])$/;
-        return datePattern.test(date);
+        return dayjs(date, "YYYY-MM-DD").isValid();
     }
 
     if (!dateFormat(start_date) || !dateFormat(end_date) || start_date > end_date) {

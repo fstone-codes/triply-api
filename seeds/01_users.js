@@ -8,11 +8,11 @@ export async function seed(knex) {
     await knex("users").insert([
         {
             id: 1,
-            first_name: "Tiffany",
-            last_name: "Oiler",
-            username: "t_oiler",
-            email: "t.oiler@ooo.com",
-            password: "$2a$10$GLIBUYvIQX.N/nz.VpRMIeqzuJyfkTK78Vfv/3dlZaSzlo6YxD/uy",
+            first_name: "Sabrina",
+            last_name: "Bug",
+            username: "bean_bug",
+            email: "beaaaan@ooo.com",
+            password: "$2a$10$fhFDmMMn04oAaB22KcUO9OafIqCXPtiXd7ctKeroCDeeJ9ga20LTm",
         },
         {
             id: 2,
@@ -24,11 +24,11 @@ export async function seed(knex) {
         },
         {
             id: 3,
-            first_name: "Marceline",
-            last_name: "Abadeer",
-            username: "marcy_vampqueen",
-            email: "marceline.abadeer@ooo.com",
-            password: "$2a$10$fhFDmMMn04oAaB22KcUO9OafIqCXPtiXd7ctKeroCDeeJ9ga20LTm",
+            first_name: "Tiffany",
+            last_name: "Oiler",
+            username: "t_oiler",
+            email: "t.oiler@ooo.com",
+            password: "$2a$10$GLIBUYvIQX.N/nz.VpRMIeqzuJyfkTK78Vfv/3dlZaSzlo6YxD/uy",
         },
     ]);
 }

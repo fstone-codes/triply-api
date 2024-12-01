@@ -29,8 +29,8 @@ export async function seed(knex) {
             trip_id: 1,
             title: "Exploration of Rick's Garage",
             description: "A deep dive into interdimensional gadgets and experiments.",
-            start: "2025-03-09T10:00:00",
-            end: "2025-03-09T17:00:00",
+            start: "2025-03-04T10:00:00",
+            end: "2025-03-04T17:00:00",
             all_day: false,
         },
         {
@@ -38,8 +38,8 @@ export async function seed(knex) {
             trip_id: 1,
             title: "Vacation on Planet Blobulus",
             description: "A relaxing getaway in a world of sentient jello creatures.",
-            start: "2025-03-11T02:00:00",
-            end: "2025-03-12T00:00:00",
+            start: "2025-05-03T02:00:00",
+            end: "2025-05-03T00:00:00",
             all_day: true,
         },
         {
@@ -47,8 +47,8 @@ export async function seed(knex) {
             trip_id: 1,
             title: "Flight to Multiverse",
             description: "Arrive 3 hours early!",
-            start: "2025-03-01T07:00:00",
-            end: "2025-03-01T10:00:00",
+            start: "2025-03-02T07:00:00",
+            end: "2025-03-02T10:00:00",
             all_day: false,
         },
         {
@@ -56,8 +56,8 @@ export async function seed(knex) {
             trip_id: 1,
             title: "Flight Home",
             description: "Don't forget passport!",
-            start: "2025-03-15T13:00:00",
-            end: "2025-03-15T16:00:00",
+            start: "2025-03-09T13:00:00",
+            end: "2025-03-09T16:00:00",
             all_day: false,
         },
         {

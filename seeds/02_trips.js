@@ -11,8 +11,8 @@ export async function seed(knex) {
             user_id: 1,
             trip_name: "Adventure Time",
             destination: "Multiverse",
-            start_date: "2025-03-01",
-            end_date: "2025-03-15",
+            start_date: "2025-03-02",
+            end_date: "2025-03-09",
         },
         {
             id: 2,

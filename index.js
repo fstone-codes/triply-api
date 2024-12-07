@@ -9,7 +9,9 @@ import listsRoutes from "./routes/lists.js";
 
 const { PORT, CORS_ORIGIN } = process.env;
 
-app.use(cors({ origin: CORS_ORIGIN }));
+if (CORS_ORIGIN) {
+    app.use(cors({ origin: CORS_ORIGIN }));
+}
 app.use(express.json());
 
 app.use("/api/trips", tripsRoutes);

@@ -9,9 +9,18 @@ import listsRoutes from "./routes/lists.js";
 
 const { PORT, CORS_ORIGIN } = process.env;
 
-if (CORS_ORIGIN) {
-    app.use(cors({ origin: CORS_ORIGIN }));
-}
+const allowedOrigins = CORS_ORIGIN?.split(",") || [];
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+    })
+);
 app.use(express.json());
 
 app.use("/api/trips", tripsRoutes);

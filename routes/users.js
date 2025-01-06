@@ -1,6 +1,12 @@
-// import express from "express";
-// import * as userController from "../controllers/userController.js";
+import express from "express";
+import * as userController from "../controllers/userController.js";
 
-// const router = express.Router();
+const router = express.Router();
 
-// export default router;
+// route "/api/users/"
+router.route("/").post(userController.addSingle);
+
+// route "/api/users/login"
+router.route("/login").post(userController.verifySingle);
+
+export default router;

@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 const app = express();
 
+import usersRoutes from "./routes/users.js";
 import tripsRoutes from "./routes/trips.js";
 import itinerariesRoutes from "./routes/itineraries.js";
 import listsRoutes from "./routes/lists.js";
@@ -23,6 +24,7 @@ app.use(
 );
 app.use(express.json());
 
+app.use("/api/users", usersRoutes);
 app.use("/api/trips", tripsRoutes);
 app.use("/api/itineraries", itinerariesRoutes);
 app.use("/api/lists", listsRoutes);

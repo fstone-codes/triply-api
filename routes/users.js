@@ -14,7 +14,7 @@ router.route("/login").post(userController.login);
 router.route("/refresh").post(userController.refreshToken);
 
 // route "/api/users/protected"
-router.route("/protected").get(authenticateToken, userController.verifyToken);
+router.route("/protected").get(authenticateToken, userController.validUser);
 
 // route "/api/users/delete"
 router.route("/delete").delete(userController.removeToken);

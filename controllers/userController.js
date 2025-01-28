@@ -86,15 +86,31 @@ export const login = async (req, res) => {
     }
 };
 
-// GET api "/api/users/protected"
-// return session of user after authentication
-// can ask with knex to query the specific user
-export const verifyToken = (req, res) => {
-    // check again if user exists in DB to protect development mode
-    // if not, return error
+// GET api "/api/users/protected/:"
+export const validUser = async (req, res) => {
+    try {
+        // check if user exists in the database before data retrieval
+        const userRow = await knex("users")
+            .where({ id: req.userId.id })
+            .first();
 
-    // dont send entire user object
-    res.json({ message: "Protected data", user: req.user });
+        if (!userRow) {
+            return res.status(404).json({
+                error: "Data retrieval failed",
+            });
+        }
+
+        // return specified user data, not revealing sensitive data
+        res.json({
+            first_name: userRow.first_name,
+            last_name: userRow.last_name,
+            username: userRow.username,
+            email: userRow.email,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Protected data, login failed" });
+    }
 };
 
 // POST api "/api/users/refresh"
@@ -110,8 +126,7 @@ export const refreshToken = async (req, res) => {
 
         // check if refresh token exists in database
         const tokenRow = await knex("refresh_tokens")
-            .where({ token: payload })
-            //{ token: refreshToken } this is what it should be
+            .where({ token: refreshToken })
             .first();
 
         if (!tokenRow) {
@@ -140,35 +155,6 @@ export const refreshToken = async (req, res) => {
     }
 };
 
-// login - create token and return token with path
-// store token somewhere (e.g. localstorage on FE)
-// get personalized content
-// pass token from local storage
-//     check first that tokens match with DB
-//     if successful, have access to user
-// can return user info except pass + bank info (secure/private data)
-
-// try {
-//     const userId = req.user.id;
-
-//     //from DB
-//     const user = await knex("users").where({ id: userId }).first();
-
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-// // here you can control which data you need
-//     res.status(200).json({
-//       id: user.id,
-//       email: user.email,
-//       name: user.name,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching user data:", error);
-//     res.status(500).json({ error: "Failed to fetch user data" });
-//   }
-
 // DELETE api "/api/users/delete"
 export const removeToken = async (req, res) => {
     try {
@@ -189,31 +175,3 @@ export const removeToken = async (req, res) => {
         res.status(500).json({ error: "Logout failed" });
     }
 };
-
-// logout
-// check token with middleware
-// if successful, logout
-
-// ELIZABETH EXAMPLE
-// router.post('/logout', authenticate, async (req, res, next) => {
-//     try {
-//         const { _id } = req.user;
-//         await User.findByIdAndUpdate(_id, { token: '' });
-//         res.json({message:'Logout success'})
-//     }
-//     catch(error) {
-//         next(error);
-//     }
-// })
-
-// why post!?
-// just need to clear, this is why we dont use PUT or PATCH
-// DELETE for entire user object
-
-// to do:
-// update GET
-// remove refresh token
-// simplified version to practive and get understanding
-
-// Frameworks
-// GPT Token

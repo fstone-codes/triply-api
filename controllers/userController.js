@@ -24,7 +24,7 @@ export const register = async (req, res) => {
         res.status(201).json(createdUser);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Unable to create user" });
+        res.status(500).json({ error: "Registration failed" });
     }
 };
 
@@ -49,27 +49,30 @@ export const login = async (req, res) => {
             });
         }
 
-        // res.sendStatus(200);
-
         // create a token using payload (from req body) and secret (from env variables)
-        const user = { id: userRow.id };
+        const userId = userRow.id;
 
-        // const accessToken = jwt.sign(
-        //     user,
-        //     process.env.ACCESS_TOKEN_SECRET,
-        //     (error, token) => {
-        //         if (error) {
-        //             return req.sendStatus(403);
-        //         }
-        //         res.json({ token, userRow });
-        //     }
-        // );
+        const accessToken = jwt.sign(
+            { id: userId },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+                // expiresIn: "30m",
+                expiresIn: "45s",
+            }
+        );
 
-        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: "30m",
-        });
-        const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-            expiresIn: "1w",
+        const refreshToken = jwt.sign(
+            { id: userId },
+            process.env.REFRESH_TOKEN_SECRET,
+            {
+                // expiresIn: "1w",
+                expiresIn: "90s",
+            }
+        );
+
+        await knex("refresh_tokens").insert({
+            token: refreshToken,
+            user_id: userId,
         });
 
         res.json({
@@ -79,12 +82,23 @@ export const login = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Unable to create user" });
+        res.status(500).json({ error: "Login failed" });
     }
 };
 
-// POST api "/api/users/token"
-export const verifyToken = async (req, res) => {
+// GET api "/api/users/protected"
+// return session of user after authentication
+// can ask with knex to query the specific user
+export const verifyToken = (req, res) => {
+    // check again if user exists in DB to protect development mode
+    // if not, return error
+
+    // dont send entire user object
+    res.json({ message: "Protected data", user: req.user });
+};
+
+// POST api "/api/users/refresh"
+export const refreshToken = async (req, res) => {
     try {
         const refreshToken = req.body.token;
 
@@ -93,28 +107,113 @@ export const verifyToken = async (req, res) => {
                 error: `Refresh unsuccessful`,
             });
         }
-    } catch (error) {}
-};
 
-function authenticateToken(req, res, next) {
-    // store data from authorization header
-    const authHeader = req.headers["authorization"];
-    // store the tken portion of authorization header only (from "Bearer TOKEN" header)
-    const token = authHeader && authHeader.split(" ")[1];
+        // check if refresh token exists in database
+        const tokenRow = await knex("refresh_tokens")
+            .where({ token: payload })
+            //{ token: refreshToken } this is what it should be
+            .first();
 
-    // check if a token has been sent
-    if (!token) {
-        return res.status(403).send({ error: "No token provided" });
-    }
-
-    // verify token by decoding token fropm authorization header with JWT
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
-        if (error) {
+        if (!tokenRow) {
             return res.sendStatus(403);
         }
 
-        // set user on our request and proceed to next function / move forward from the middleware
-        req.user = user;
-        next();
-    });
-}
+        // verify the refresh token
+        const payload = jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        );
+
+        if (!payload) {
+            return res.sendStatus(403);
+        }
+
+        const accessToken = jwt.sign(
+            { id: payload.id },
+            process.env.ACCESS_TOKEN_SECRET
+        );
+
+        res.json({ accessToken: accessToken });
+    } catch (error) {
+        console.error(error);
+        res.status(403).json({ error: "Refresh failed" });
+    }
+};
+
+// login - create token and return token with path
+// store token somewhere (e.g. localstorage on FE)
+// get personalized content
+// pass token from local storage
+//     check first that tokens match with DB
+//     if successful, have access to user
+// can return user info except pass + bank info (secure/private data)
+
+// try {
+//     const userId = req.user.id;
+
+//     //from DB
+//     const user = await knex("users").where({ id: userId }).first();
+
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+// // here you can control which data you need
+//     res.status(200).json({
+//       id: user.id,
+//       email: user.email,
+//       name: user.name,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching user data:", error);
+//     res.status(500).json({ error: "Failed to fetch user data" });
+//   }
+
+// DELETE api "/api/users/delete"
+export const removeToken = async (req, res) => {
+    try {
+        // remove the refresh token from the database to log user out
+        const refreshToken = req.body.token;
+
+        const rowsDeleted = await knex("refresh_tokens")
+            .where({ token: refreshToken })
+            .delete();
+
+        if (rowsDeleted === 0) {
+            return res.status(404).json({ error: "Token not found" });
+        }
+
+        res.sendStatus(204);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Logout failed" });
+    }
+};
+
+// logout
+// check token with middleware
+// if successful, logout
+
+// ELIZABETH EXAMPLE
+// router.post('/logout', authenticate, async (req, res, next) => {
+//     try {
+//         const { _id } = req.user;
+//         await User.findByIdAndUpdate(_id, { token: '' });
+//         res.json({message:'Logout success'})
+//     }
+//     catch(error) {
+//         next(error);
+//     }
+// })
+
+// why post!?
+// just need to clear, this is why we dont use PUT or PATCH
+// DELETE for entire user object
+
+// to do:
+// update GET
+// remove refresh token
+// simplified version to practive and get understanding
+
+// Frameworks
+// GPT Token

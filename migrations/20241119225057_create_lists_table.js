@@ -5,9 +5,9 @@
 export function up(knex) {
     return knex.schema.createTable("lists", (table) => {
         table.increments("id").primary();
+        table.integer("trip_id").unsigned().notNullable();
         table
-            .integer("trip_id")
-            .unsigned()
+            .foreign("trip_id")
             .references("trips.id")
             .onUpdate("CASCADE")
             .onDelete("CASCADE");
@@ -15,7 +15,9 @@ export function up(knex) {
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table
             .timestamp("updated_at")
-            .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
+            .defaultTo(
+                knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+            );
     });
 }
 

@@ -7,7 +7,7 @@ export function up(knex) {
         table.increments("id").primary();
         table.text("token").notNullable();
         table.integer("user_id").unsigned().notNullable();
-        // where I left off
+        table.foreign("user_id").references("users.id").onDelete("CASCADE");
         table.timestamp("created_at").defaultTo(knex.fn.now());
     });
 }

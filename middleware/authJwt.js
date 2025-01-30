@@ -14,10 +14,20 @@ export default function authenticateToken(req, res, next) {
     // verify token by decoding token from authorization header with JWT
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
         if (error) {
-            return res.sendStatus(403);
+            if (error.name === "TokenExpiredError") {
+                console.error("Expired token:", error.message);
+                return res.status(401).json({ error: "Expired token" });
+            } else if (error.name === "JsonWebTokenError") {
+                console.error("Invalid token:", error.message);
+                return res.status(401).json({ error: "Invalid token" });
+            }
+
+            console.error("Unknown error:", error.message);
+            return res.status(401).json({ error: "Unauthorized" });
         }
 
-        // set user key/property on our request body and proceed to next function / move forward from the middleware
+        // set decoded user key/property on our request body and proceed to next function / move forward from the middleware
+        console.log("Successful authentication");
         req.userId = user;
         next();
     });

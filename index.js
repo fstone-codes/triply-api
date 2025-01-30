@@ -3,6 +3,9 @@ import cors from "cors";
 import express from "express";
 const app = express();
 
+import { cleaner } from "./scheduler.js";
+cleaner.start();
+
 import usersRoutes from "./routes/users.js";
 import tripsRoutes from "./routes/trips.js";
 import itinerariesRoutes from "./routes/itineraries.js";

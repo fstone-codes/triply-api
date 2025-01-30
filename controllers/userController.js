@@ -56,8 +56,7 @@ export const login = async (req, res) => {
             { id: userId },
             process.env.ACCESS_TOKEN_SECRET,
             {
-                // expiresIn: "30m",
-                expiresIn: "45s",
+                expiresIn: "30m",
             }
         );
 
@@ -65,14 +64,14 @@ export const login = async (req, res) => {
             { id: userId },
             process.env.REFRESH_TOKEN_SECRET,
             {
-                // expiresIn: "1w",
-                expiresIn: "90s",
+                expiresIn: "1w",
             }
         );
 
         await knex("refresh_tokens").insert({
             token: refreshToken,
             user_id: userId,
+            expires_at: knex.raw("NOW() + INTERVAL 7 DAY"),
         });
 
         res.json({

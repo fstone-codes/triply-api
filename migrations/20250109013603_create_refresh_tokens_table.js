@@ -8,6 +8,7 @@ export function up(knex) {
         table.text("token").notNullable();
         table.integer("user_id").unsigned().notNullable();
         table.foreign("user_id").references("users.id").onDelete("CASCADE");
+        table.timestamp("expires_at");
         table.timestamp("created_at").defaultTo(knex.fn.now());
     });
 }
